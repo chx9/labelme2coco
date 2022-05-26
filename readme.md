@@ -4,4 +4,4 @@ labelme to coco format
 
 2. define labelme_path where data stores(.jpg images and json files)
 
-3. define saved_coco_path where data in coco format stores
+3. define saved_coco_path where generates to
