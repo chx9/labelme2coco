@@ -10,11 +10,10 @@ np.random.seed(41)
 
 # 0为背景
 classname_to_id = {
-    "C10T10": 1,
-    "C11T10": 2,
-    "C11T10T20": 3,
-    "C11T11": 4,
-    "C11T11T21": 5
+    "C11T10":1, 
+    "C11T11":2,
+    "C11T10T20":3,
+    "C11T11T21":4,
 }
 
 
@@ -104,9 +103,10 @@ class Lableme2CoCo:
 
 
 if __name__ == '__main__':
-    labelme_path = "./data"
-    saved_coco_path = "./"
-
+    labelme_path = "./compressed"
+    saved_coco_path = "./coco"
+    print('reading...')
+    # 创建文件
     if not os.path.exists("%scoco/annotations/" % saved_coco_path):
         os.makedirs("%scoco/annotations/" % saved_coco_path)
     if not os.path.exists("%scoco/images/train2017/" % saved_coco_path):
@@ -117,9 +117,8 @@ if __name__ == '__main__':
     print(labelme_path + "/*.json")
     json_list_path = glob.glob(labelme_path + "/*.json")
     print('json_list_path: ', len(json_list_path))
-
     # 数据划分,这里没有区分val2017和tran2017目录，所有图片都放在images目录下
-    train_path, val_path = train_test_split(json_list_path, test_size=0.2, train_size=0.8)
+    train_path, val_path = train_test_split(json_list_path, test_size=0.1, train_size=0.9)
     print("train_n:", len(train_path), 'val_n:', len(val_path))
 
     # 把训练集转化为COCO的json格式
@@ -127,24 +126,22 @@ if __name__ == '__main__':
     train_instance = l2c_train.to_coco(train_path)
     l2c_train.save_coco_json(train_instance, '%scoco/annotations/instances_train2017.json' % saved_coco_path)
     for file in train_path:
-        # print(file)
         shutil.copy(file.replace("json", "jpg"), "%scoco/images/train2017/" % saved_coco_path)
         img_name = file.replace('json', 'jpg')
         temp_img = cv2.imread(img_name)
         try:
-            cv2.imwrite("{}coco/images/train2017/{}".format(saved_coco_path, img_name),temp_img)
+            cv2.imwrite("{}coco/images/train2017/{}".format(saved_coco_path, img_name.replace('png', 'jpg')),temp_img)
         except Exception as e:
             print(e)
             print('Wrong Image:', img_name )
             continue
 
     for file in val_path:
-        # print(file)
         shutil.copy(file.replace("json", "jpg"), "%scoco/images/val2017/" % saved_coco_path)
         img_name = file.replace('json', 'jpg')
         temp_img = cv2.imread(img_name)
         try:
-            cv2.imwrite("{}coco/images/val2017/{}".format(saved_coco_path, img_name), temp_img)
+            cv2.imwrite("{}coco/images/val2017/{}".format(saved_coco_path, img_name.replace('png', 'jpg')), temp_img)
         except Exception as e:
             print(e)
             print('Wrong Image:', img_name)
